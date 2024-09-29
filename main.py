@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
+import psycopg2
 import os
 
 app = Flask(__name__)
@@ -6,9 +7,6 @@ app = Flask(__name__)
 @app.route('/')
 def index():
   return render_template('index.html')
-
-if __name__ == '__main__':
-  app.run(port=5000)
 
 DB_HOST = os.getenv('DB_HOST')
 DB_NAME = os.getenv('DB_NAME')
@@ -23,3 +21,6 @@ conn = psycopg2.connect(
     password=DB_PASSWORD,
     port=DB_PORT
 )
+
+if __name__ == '__main__':
+  app.run(port=5000)
