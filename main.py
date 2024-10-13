@@ -1,14 +1,3 @@
-# from flask import Flask, render_template
-
-# app = Flask(__name__)
-
-# @app.route('/')
-# def index():
-#   return render_template('index.html')
-
-# if __name__ == '__main__':
-#   app.run(port=5000)
-# app.py
 from flask import Flask, request, jsonify
 import pickle
 import numpy as np
@@ -21,13 +10,12 @@ app = Flask(__name__)
 with open('svc.pkl', 'rb') as f:
     model = pickle.load(f)
 
-# Load LabelEncoder (assuming you saved it; if not, you'll need to handle encoding)
-# If you didn't save the LabelEncoder, ensure that the encoding process is consistent
-# For example, you can save it similarly to the model or handle encoding in another way
-
-# Example: If the label encoder is saved
-with open('label_encoder.pkl', 'rb') as f:
-    le = pickle.load(f)
+# Create and fit a new LabelEncoder
+# Replace this with the actual labels you used during training
+# Ensure that these labels match those in your training dataset
+known_labels = ['Disease1', 'Disease2', 'Disease3']  # Example labels
+le = LabelEncoder()
+le.fit(known_labels)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -39,11 +27,7 @@ def predict():
             return jsonify({'error': 'No symptoms provided'}), 400
 
         # Preprocess the input data
-        # This step depends on how your model expects the input
-        # For example, you might need to convert symptoms to a specific format
-        # Here, assuming symptoms are binary features matching the training data
-
-        # Example: Convert symptoms list to a DataFrame row
+        # Assuming symptoms are binary features matching the training data
         input_data = pd.DataFrame([symptoms])
 
         # Add noise if necessary (as in your training script)
@@ -62,4 +46,3 @@ def predict():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
-
