@@ -17,6 +17,10 @@ known_labels = ['Disease1', 'Disease2', 'Disease3']  # Example labels
 le = LabelEncoder()
 le.fit(known_labels)
 
+@app.route('/')
+def home():
+    return "Welcome to the Flask API! Use /predict to make a prediction."
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
