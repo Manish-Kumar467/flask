@@ -12,12 +12,9 @@ model = joblib.load('svc.pkl')
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json  # Expecting JSON data
-    symptoms_str = data.get('symptoms')  # Symptoms as comma-separated string
+    symptoms_list = data.get('symptoms')  # List of symptoms
     
-    # Convert comma-separated symptoms string to a list
-    symptoms_list = symptoms_str.split(',')
-    
-    # Ensure the list is in a format the model expects
+    # Ensure symptoms_list is in a format the model expects
     input_data = np.array(symptoms_list).reshape(1, -1)
     
     # Make prediction
