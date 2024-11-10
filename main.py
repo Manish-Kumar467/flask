@@ -1,52 +1,31 @@
-# from flask import Flask, request, jsonify
-# import pickle
-# import numpy as np
-# import pandas as pd
-# from sklearn.preprocessing import LabelEncoder
+from flask import Flask, request, jsonify
+import joblib
+import numpy as np
+from flask_cors import CORS
 
-# app = Flask(__name__)
+app = Flask(__name__)
+CORS(app)  # Allow CORS for all routes
 
-# # Load the trained model
-# with open('svc.pkl', 'rb') as f:
-#     model = pickle.load(f)
+# Load the SVC model
+model = joblib.load('svc.pkl')
 
-# # Create and fit a new LabelEncoder
-# # Replace this with the actual labels you used during training
-# # Ensure that these labels match those in your training dataset
-# known_labels = ['Disease1', 'Disease2', 'Disease3']  # Example labels
-# le = LabelEncoder()
-# le.fit(known_labels)
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.json  # Expecting JSON data
+    symptoms_str = data.get('symptoms')  # Symptoms as comma-separated string
+    
+    # Convert comma-separated symptoms string to a list
+    symptoms_list = symptoms_str.split(',')
+    
+    # Ensure the list is in a format the model expects
+    input_data = np.array(symptoms_list).reshape(1, -1)
+    
+    # Make prediction
+    prediction = model.predict(input_data)
+    predicted_disease = prediction[0]
+    
+    # Return the prediction as JSON
+    return jsonify({'disease': predicted_disease})
 
-# @app.route('/')
-# def home():
-#     return "Welcome to the Flask API! Use /predict to make a prediction."
-
-# @app.route('/predict', methods=['POST'])
-# def predict():
-#     try:
-#         data = request.get_json()
-#         symptoms = data.get('symptoms')
-
-#         if not symptoms:
-#             return jsonify({'error': 'No symptoms provided'}), 400
-
-#         # Preprocess the input data
-#         # Assuming symptoms are binary features matching the training data
-#         input_data = pd.DataFrame([symptoms])
-
-#         # Add noise if necessary (as in your training script)
-#         noise_level = 0.15
-#         noise = np.random.normal(1, noise_level, input_data.shape)
-#         input_noisy = input_data * noise
-
-#         # Make prediction
-#         prediction_encoded = model.predict(input_noisy)
-#         prediction = le.inverse_transform(prediction_encoded)
-
-#         return jsonify({'predicted_disease': prediction[0]})
-
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=8080)
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
