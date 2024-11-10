@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)  # Allow CORS for all routes
 
 # Load the SVC model
-model = joblib.load('svc.pkl')
+model = joblib.load('./models/svc.pkl')
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -26,3 +26,4 @@ def predict():
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
+
