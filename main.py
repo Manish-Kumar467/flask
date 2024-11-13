@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import pickle
 from flask_cors import CORS
-import os
-import requests
+# import os
+# import requests
 
 
 app = Flask(__name__)
